@@ -2,7 +2,7 @@
 
 ## Inicio del proyecto 
 ### Pasos para iniciar base de datos
-Ejecutar migracion `php artisan migrate`, el caso no se ejecute enla tua `databases/batabase.sql` esta para ser puesto en marcha.
+Ejecutar migracion `php artisan migrate`, el caso no se ejecute enla tua `databases/prueba-tecnica-aveonline.sql` esta para ser puesto en marcha.
 
 ### Pasos para iniciar login
 Ejecutar seeder  `php artisan db:seed`
