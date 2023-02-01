@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Http\Request;
 
 class UserController extends Controller
 {
@@ -18,28 +20,27 @@ class UserController extends Controller
     */
     public function login()
     {
- 
+        
         $validator = Validator::make(request()->all(), [
-            'email' => 'required|email',
+            'login' => 'required',
             'password' => 'required',
         ],
         [
-            'email.required' => 'El  :attribute es requerido.',
+            'login.required' => 'El  :attribute es requerido.',
             'password.required' => 'El  :attribute es requerido.'
         ]
-    );
-    
+        );  
         if ($validator->fails()) {    
             return response()->json($validator->messages());
         }
-        $User = User::where('login', request()->email)->first();
+        $User = User::where('login', request()->login)->first();
         
         if (!Hash::check(request()->password, $User->password)) {
             return response()->json('Contraseña incorrecta');
         }
         
         return response()->json([
-            'token' => $User->createToken(request()->email)->plainTextToken
+            'token' => $User->createToken(request()->login)->plainTextToken
         ]);
     }
 
@@ -68,7 +69,12 @@ class UserController extends Controller
      */
     public function index()
     {
-        //
+        $User = User::all();
+        return response()->json([
+        "success" => true,
+        "message" => "User List",
+        "data" => $User
+        ]);
     }
 
     /**
@@ -77,45 +83,57 @@ class UserController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     *  @author Jhon bernal
-     * Almacene un usuario recién creado en el almacenamiento.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
     public function store(Request $request)
     {
-        //
+        $input = $request->all();
+        $validator = Validator::make($input, [
+        'name' => 'required',
+        'password' => 'required',
+        'rol' => 'required',
+        'login' => 'required'
+        ],[
+            'login.required' => 'El  :attribute es requerido.',
+            'password.required' => 'El  :attribute es requerido.',
+            'rol.required' => 'El  :attribute es requerido.',
+            'login.required' => 'El  :attribute es requerido.'
+        ]);
+        if($validator->fails()){
+            return $this->sendError('Validation Error.', $validator->errors());       
+        }
+        $user = User::create([
+            'name' => $input['name'],
+            'login' => $input['login'],
+            'password' => Hash::make($input['password']), // password
+            'remember_token' => Str::random(10),
+            'login_verified_at' => now(),
+            'rol' => $input['rol']
+        ]);
+        return response()->json([
+        "success" => true,
+        "message" => "User creado.",
+        "data" => $user
+        ]);
     }
 
     /**
      *  @author Jhon bernal
      * Muestra el usuario especificado.
      *
-     * @param  \App\Models\Customers  $customers
+     * @param  \App\Models\User  $customers
      * @return \Illuminate\Http\Response
      */
-    public function show(Customers $customers)
+    public function show($id)
     {
-        //
-    }
+        $user = User::find($id);
+        if (is_null($user)) {
+            return $this->sendError('usuario no encontrado.');
+        }
+        return response()->json([
+        "success" => true,
+        "message" => "Usuario especifico.",
+        "data" => $user
+        ]);
 
-    /**
-     *  @author Jhon bernal
-     * Muestra el formulario para editar el usuario especificado.
-     *
-     * @param  \App\Models\Customers  $customers
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Customers $customers)
-    {
-        //
     }
 
     /**
@@ -123,23 +141,52 @@ class UserController extends Controller
      * Actualice el uusario especificado en el almacenamiento.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Customers  $customers
+     * @param  \App\Models\User  $customers
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Customers $customers)
+    public function update(Request $request, User $user)
     {
-        //
+        $input = $request->all();
+        $validator = Validator::make($input, [
+            'name' => 'required',
+            'password' => 'required',
+            'rol' => 'required',
+            'login' => 'required'
+            ],[
+                'login.required' => 'El  :attribute es requerido.',
+                'password.required' => 'El  :attribute es requerido.',
+                'rol.required' => 'El  :attribute es requerido.',
+                'login.required' => 'El  :attribute es requerido.'
+            ]);
+        if($validator->fails()){
+        return $this->sendError('Validation Error.', $validator->errors());       
+        }
+        $user->name = $input['name'];
+        $user->rol = $input['rol'];
+        $user->login = $input['login'];
+        $user->password = $input['password'];
+        $user->save();
+        return response()->json([
+        "success" => true,
+        "message" => "Usuario actualizado.",
+        "data" => $user
+        ]);
     }
 
     /**
      *  @author Jhon bernal
      * Elimina el usuario especificado del almacenamiento.
      *
-     * @param  \App\Models\Customers  $customers
+     * @param  \App\Models\User  $customers
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Customers $customers)
+    public function destroy(User $user)
     {
-        //
+        $user->delete();
+        return response()->json([
+            "success" => true,
+            "message" => "usuario eliminado.",
+            "data" => $user
+        ]);
     }
 }
