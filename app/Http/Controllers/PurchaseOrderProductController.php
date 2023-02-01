@@ -2,84 +2,38 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\purchaseOrderProduct;
+use App\Models\PurchaseOrderProduct;
+use App\Models\PurchaseOrder;
+use App\Models\Product;
 use Illuminate\Http\Request;
 
 class PurchaseOrderProductController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * @author Jhon bernal
+     * Muestra el formulario para crear un nueva orden de compra por producto.
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function store($id_products, $purchaseOrderId)
     {
-        //
+        try {
+            $cost = 0;
+            $purchaseOrderProductId = [];
+            foreach ($id_products as $key => $value) {
+                $product =  Product::find($value);
+                $purchaseOrderProduct = new PurchaseOrderProduct;            
+                $purchaseOrderProduct->purchase_orders_id = $purchaseOrderId;
+                $purchaseOrderProduct->product_id = $product->id; 
+                $purchaseOrderProduct->save();
+                $cost += $product->cost;
+                $purchaseOrderProductId[] = $purchaseOrderProduct->id;
+
+            }
+            return $cost;
+        } catch (\Throwable $th) {
+            return  false;
+        }
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\purchaseOrderProduct  $purchaseOrderProduct
-     * @return \Illuminate\Http\Response
-     */
-    public function show(purchaseOrderProduct $purchaseOrderProduct)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\purchaseOrderProduct  $purchaseOrderProduct
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(purchaseOrderProduct $purchaseOrderProduct)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\purchaseOrderProduct  $purchaseOrderProduct
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, purchaseOrderProduct $purchaseOrderProduct)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\purchaseOrderProduct  $purchaseOrderProduct
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(purchaseOrderProduct $purchaseOrderProduct)
-    {
-        //
-    }
 }

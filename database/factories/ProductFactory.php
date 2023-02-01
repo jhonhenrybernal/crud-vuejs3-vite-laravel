@@ -20,6 +20,7 @@ class ProductFactory extends Factory
     {
         return [
             'name' => $this->faker->unique()->numerify('ABC###'),
+            'cost' => $this->faker->unique()->numerify('##.###'),
         ];
     }
 }

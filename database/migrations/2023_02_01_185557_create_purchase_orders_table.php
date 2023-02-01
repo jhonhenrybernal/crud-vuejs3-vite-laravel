@@ -16,8 +16,12 @@ return new class extends Migration
         Schema::create('purchase_orders', function (Blueprint $table) {
             $table->id();
             $table->string('order', 50);
+            $table->integer('user_id')->unsigned();
             $table->integer('cost')->length(50);
+            $table->date('date_purchase');
             $table->timestamps();
+
+            $table->foreign('user_id')->references('id')->on('users');
         });
     }
 
