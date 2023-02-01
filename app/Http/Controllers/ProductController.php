@@ -34,15 +34,21 @@ class ProductController extends Controller
     {
         $input = $request->all();
         $validator = Validator::make($input, [
-        'name' => 'required'
+        'name' => 'required|unique:Products'
         ],[
-            'name.required' => 'El  :attribute es requerido.'
+            'name.required' => 'El  :attribute es requerido.',
+            'name.unique' => 'El  :attribute ya existe.'
         ]);
         if($validator->fails()){
-            return $this->sendError('Validation Error.', $validator->errors());       
+            return response()->json([
+                "success" => false,
+                "message" => $validator->errors(),
+                "data" => ''
+                ]);  
         }
         $product = Product::create([
             'name' => $input['name'],
+            'cost' => $input['cost']
         ]);
         return response()->json([
         "success" => true,
@@ -62,7 +68,11 @@ class ProductController extends Controller
     {
         $product = Product::find($id);
         if (is_null($product)) {
-            return $this->sendError('producto no encontrado.');
+            return response()->json([
+                "success" => false,
+                "message" => 'producto no encontrado.',
+                "data" => ''
+                ]);  
         }
         return response()->json([
         "success" => true,
@@ -84,13 +94,17 @@ class ProductController extends Controller
     {
         $input = $request->all();
         $validator = Validator::make($input, [
-            'name' => 'required',
+            'name' => 'required|unique:Products',
       
             ],[
                 'name.required' => 'El  :attribute es requerido.'
             ]);
         if($validator->fails()){
-        return $this->sendError('Validation Error.', $validator->errors());       
+            return response()->json([
+                "success" => false,
+                "message" =>  $validator->errors(),
+                "data" => ''
+                ]);       
         }
         $product->name = $input['name'];
         $product->save();
