@@ -15,7 +15,7 @@
                 <router-link class="text-white ml-2" :to="{name : 'Order' }" v-if="$store.getters.getToken != 0"> Ordenes</router-link>
             </li>
         </ul>
-        <button v-if="$store.getters.getToken != 0"  type="button" class="btn btn-dark mt-2" @click="logout">Logout</button>
+        <button v-if="$store.getters.getToken != 0"  type="button" class="btn btn-dark mt-2" @click="logout">Salir</button>
     </nav>
 
     <router-view></router-view>
