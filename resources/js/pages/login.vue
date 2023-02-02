@@ -42,7 +42,7 @@
                     console.log(res.data)
                     if(res.data.success){
                         store.dispatch('setToken',res.data.data.token);
-                        router.push({name:'Dashboard'})
+                        router.push({name:'User'})
                     }else{
                         error.value = res.data.message;
                     }

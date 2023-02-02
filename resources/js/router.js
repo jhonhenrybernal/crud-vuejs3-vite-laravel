@@ -1,17 +1,14 @@
 import { createWebHistory, createRouter } from 'vue-router';
-import home from './pages/home.vue';
 import login from './pages/login.vue';
-import dashboard from './pages/dashboard.vue';
+import user from './pages/user.vue'
+import roles from './pages/roles.vue'
+import product from './pages/product.vue'
+import order from './pages/order.vue'
 import store from './store'
 
 const routes = [
     {
         path : '/',
-        name : 'Home',
-        component : home
-    },
-    {
-        path : '/login',
         name : 'Login',
         component : login,
         meta:{
@@ -19,13 +16,37 @@ const routes = [
         }
     },
     {
-        path : '/dashboard',
-        name : 'Dashboard',
-        component : dashboard,
+        path : '/user',
+        name : 'User',
+        component : user,
         meta:{
             requiresAuth:true
         }
     },
+    {
+        path : '/roles',
+        name : 'Roles',
+        component : roles,
+        meta:{
+            requiresAuth:true
+        }
+    },
+    {
+        path : '/product',
+        name : 'Product',
+        component : product,
+        meta:{
+            requiresAuth:true
+        }
+    },
+    {
+        path : '/order',
+        name : 'Order',
+        component : order,
+        meta:{
+            requiresAuth:true
+        }
+    }
 
 ];
 
@@ -40,7 +61,7 @@ router.beforeEach((to,from) =>{
         return { name : 'Login'}
     }
     if(to.meta.requiresAuth == false && store.getters.getToken != 0){
-        return { name : 'Dashboard'}
+        return { name : 'User'}
     }
 })
 
