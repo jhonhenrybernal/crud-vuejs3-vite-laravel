@@ -30,18 +30,27 @@ class UserController extends Controller
             'password.required' => 'El  :attribute es requerido.'
         ]
         );  
-        if ($validator->fails()) {    
-            return response()->json($validator->messages());
+        if ($validator->fails()) { 
+            return response()->json([
+                "success" => false,
+                "message" => "User List",
+                "data" =>  $validator->messages()
+                ]);   
         }
         $User = User::where('login', request()->login)->first();
         
         if (!Hash::check(request()->password, $User->password)) {
-            return response()->json('Contraseña incorrecta');
+            return response()->json([
+                "success" => false,
+                "message" => "User List",
+                "data" =>  'Contraseña incorrecta'
+                ]);   
         }
-        
         return response()->json([
-            'token' => $User->createToken(request()->login)->plainTextToken
-        ]);
+            "success" => true,
+            "message" => "User List",
+            "data" =>  $User->createToken(request()->login)->plainTextToken
+            ]);
     }
 
   
