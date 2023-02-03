@@ -17,7 +17,7 @@ class PurchaseOrderController extends Controller
      */
     public function index()
     {
-        $purchaseOrder = PurchaseOrder::with('purchaseOrderProduct')->get();
+        $purchaseOrder = PurchaseOrder::with('purchaseOrderProduct')->with('user')->get();
         return response()->json([
         "success" => true,
         "message" => "User List",
@@ -35,10 +35,8 @@ class PurchaseOrderController extends Controller
     {
         $input = $request->all();
         $validator = Validator::make($input, [
-        'id_product' => 'required',
         'date_purchase' => 'required',
         ],[
-            'id_product.required' => 'El  :attribute es requerido.',
             'date_purchase.required' => 'El  :attribute es requerido.',
         ]);
         if($validator->fails()){
@@ -58,7 +56,6 @@ class PurchaseOrderController extends Controller
         }
         $order = Str::random(10);
         $purchaseOrder = PurchaseOrder::create([
-            'id_product' => $input['id_product'],
             'date_purchase' => $input['date_purchase'],
             'order' =>$order ,
             'user_id' => auth()->user()->id,
@@ -81,7 +78,7 @@ class PurchaseOrderController extends Controller
         return response()->json([
         "success" => true,
         "message" => "Orden de compra creado.",
-        "data" => PurchaseOrder::with('purchaseOrderProduct')->find($purchaseOrder->id)
+        "data" => PurchaseOrder::with('purchaseOrderProduct')->with('user')->get()
         ]);
     }
 
