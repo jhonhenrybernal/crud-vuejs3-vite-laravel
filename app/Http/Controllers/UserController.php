@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Models\Client;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Validator;
@@ -38,18 +39,50 @@ class UserController extends Controller
                 ]);   
         }
         $User = User::where('login', request()->login)->first();
-        
-        if (!Hash::check(request()->password, $User->password)) {
+        $client = Client::where('login', request()->login)->first();
+
+        if ($User ) {
+            if(!Hash::check(request()->password, $User->password)){
+                return response()->json([
+                    "success" => false,
+                    "message" => "User error pw",
+                    "data" =>  'Contraseña o usuario incorrecto'
+                    ]);   
+            }
+            $User->login_verified_at = now();
+            $User->save();
+        }
+
+        if ($client ) {
+            if(!Hash::check(request()->password, $client->password)){
+                return response()->json([
+                    "success" => false,
+                    "message" => "User error pw",
+                    "data" =>  'Contraseña o usuario incorrecto'
+                    ]);   
+            }
+            $client->login_verified_at = now();
+            $client->save();
+        }
+        if (!$User && !$client) {
+            
             return response()->json([
                 "success" => false,
-                "message" => "User List",
-                "data" =>  'Contraseña incorrecta'
+                "message" => "Cliente error",
+                "data" =>  'Contraseña o cliente incorrecto'
                 ]);   
+        }
+       
+        $token = null;
+        if ($User) {
+            $token =  $User->createToken(request()->login)->plainTextToken;
+        }else if ($client) {
+            $token =  $client->createToken(request()->login)->plainTextToken;
         }
         return response()->json([
             "success" => true,
             "message" => "User List",
-            "data" =>  $User->createToken(request()->login)->plainTextToken
+            "data" => $token
             ]);
     }
 
@@ -99,15 +132,20 @@ class UserController extends Controller
         'name' => 'required',
         'password' => 'required',
         'rol' => 'required',
-        'login' => 'required'
+        'login' => 'required|unique:users'
         ],[
             'login.required' => 'El  :attribute es requerido.',
             'password.required' => 'El  :attribute es requerido.',
             'rol.required' => 'El  :attribute es requerido.',
-            'login.required' => 'El  :attribute es requerido.'
+            'login.required' => 'El  :attribute es requerido.',
+            'login.unique' => 'El  :attribute ya existe.'
         ]);
         if($validator->fails()){
-            return $this->sendError('Validation Error.', $validator->errors());       
+            return response()->json([
+                "success" => false,
+                "message" => "User erro.",
+                "data" => $validator->errors()
+                ]);  
         }
         $user = User::create([
             'name' => $input['name'],
@@ -120,7 +158,7 @@ class UserController extends Controller
         return response()->json([
         "success" => true,
         "message" => "User creado.",
-        "data" => $user
+        "data" => User::with('role')->get()
         ]);
     }
 
@@ -193,13 +231,13 @@ class UserController extends Controller
      * @param  \App\Models\User  $customers
      * @return \Illuminate\Http\Response
      */
-    public function destroy(User $user)
+    public function destroy($id)
     {
-        $user->delete();
+        Client::find($id)->delete();
         return response()->json([
             "success" => true,
-            "message" => "usuario eliminado.",
-            "data" => $user
+            "message" => "cliente eliminado.",
+            "data" => ''
         ]);
     }
 }

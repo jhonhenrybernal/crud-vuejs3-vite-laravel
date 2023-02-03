@@ -11,7 +11,7 @@
           <div class="lg:flexlg:justify-between">
               <div class="mt-6 flex lg:mt-5 lg:ml-5">
                   <span class="sm:ml-3">
-                      <button type="button" @click="openForm = true, isEdit = false" class="inline-flex items-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
+                      <button type="button" @click="openForm = true, isEdit = false,   alert =false, login = '',password= '',name=''" class="inline-flex items-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
                         Nuevo
                       </button>
                   </span>
@@ -42,6 +42,14 @@
             </table>
             <div class="mx-auto max-w-7xl py-6 sm:px-6 lg:px-8"  v-if="openForm">
             <div class="mt- md:col-span-3 md:mt-2">
+                <div role="alert" v-if="alert">
+                <div class="bg-red-500 text-white font-bold rounded-t px-4 py-2">
+                    Alerta
+                </div>
+                <div class="border border-t-0 border-red-400 rounded-b bg-red-100 px-4 py-3 text-red-700">
+                    <p v-for="(list,k) in messageError" :key="k">{{ list }}</p>
+                </div>
+                </div>
                 <form  v-on:submit="addData">
                 <div class="shadow sm:overflow-hidden sm:rounded-md">
                     <div class="space-y-6 bg-white px-4 py-5 sm:p-6">
@@ -80,6 +88,7 @@
     </div>
 </template>
 <script >
+import { slotFlagsText } from '@vue/shared';
 import moment from 'moment';
 
   export default {
@@ -96,7 +105,9 @@ import moment from 'moment';
             password: '' ,
             openForm:false,
             isEdit:false,
-            token:''
+            token:'',
+            alert:false,
+            messageError:[]
             
         }   
     },
@@ -134,8 +145,8 @@ import moment from 'moment';
                 return moment(String(value)).format('MM/DD/YYYY hh:mm')
             }
         },
-        addData(){
-            this.openForm = false;
+        addData(e){       
+            e.preventDefault()   
             var data = {
                     name: this.name,
                     login:  this.login,
@@ -148,6 +159,12 @@ import moment from 'moment';
                     Authorization: 'Bearer ' +  this.token 
                     }
                 }).then(res=>{
+                    if (!res.data.success) {
+                        this.alert = true
+                        this.messageError = res.data.data.login
+                        return false
+                    }
+                    this.openForm = false;
                     this.listData = res.data.data
                     this.init()
                 })
@@ -157,6 +174,12 @@ import moment from 'moment';
                     Authorization: 'Bearer ' +  this.token 
                     }
                 }).then(res=>{
+                    if (!res.data.success) {
+                        this.alert = true
+                        this.messageError = res.data.data.login
+                        return false
+                    }
+                    this.openForm = false;
                     this.listData = res.data.data
                     this.init()
                 })

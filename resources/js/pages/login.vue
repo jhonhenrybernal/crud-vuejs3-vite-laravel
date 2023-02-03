@@ -16,6 +16,14 @@
             <a href="#" class="font-medium text-indigo-600 hover:text-indigo-500">Aveoline</a>
           </p>
         </div>
+        <div role="alert" v-if="alert">
+          <div class="bg-red-500 text-white font-bold rounded-t px-4 py-2">
+            Alerta
+          </div>
+          <div class="border border-t-0 border-red-400 rounded-b bg-red-100 px-4 py-3 text-red-700">
+            <p>{{ messageError }}</p>
+          </div>
+        </div>
         <form class="mt-8 space-y-6" @submit="login">
           <input type="hidden" name="remember" value="true" />
           <div class="-space-y-px rounded-md shadow-sm">
@@ -53,51 +61,26 @@
     };
     let loading = ref(false);
     let errorMsg = ref("");
-
+    
+    let alert = ref(false);;
+    let messageError = ref("");
 
     function login(ev) {
     ev.preventDefault();
     loading.value = true;
     axios.post('/api/login',form).then(res=>{
         loading.value = false;
-        console.log(res.data)
         if(res.data.success){
             store.dispatch('setToken',res.data.data);
             router.push({name:'User'})
         }else{
-            error.value = res.data.message;
-            loading.value = false;
-            errorMsg.value = err.response.data.error;
+          console.log(res.data.data)
+          messageError.value = res.data.data;
+          alert.value = true 
+          setTimeout(() => {
+            alert.value = false 
+          }, 3000);
         }
     })
     }
-    /* export default{
-        setup(){
-            const router = useRouter()
-            const store = useStore()
-
-            let form = reactive({
-                login: '',
-                password: ''
-            });
-            let error = ref('')
-
-            const login = async() =>{
-                await axios.post('/api/login',form).then(res=>{
-                    console.log(res.data)
-                    if(res.data.success){
-                        store.dispatch('setToken',res.data.data.token);
-                        router.push({name:'User'})
-                    }else{
-                        error.value = res.data.message;
-                    }
-                })
-            }
-            return{
-                form,
-                login,
-                error
-            }
-        }
-    } */
 </script>
