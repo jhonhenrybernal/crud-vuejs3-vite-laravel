@@ -24,4 +24,8 @@ class PurchaseOrder extends Model
     public function purchaseOrderProduct() {
         return $this->hasMany('App\Models\PurchaseOrderProduct','purchase_orders_id');
     }
+
+    public function user() {
+        return $this->hasOne('App\Models\User','id','user_id');
+    }
 }
