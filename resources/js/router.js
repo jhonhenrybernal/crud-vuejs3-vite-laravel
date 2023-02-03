@@ -1,6 +1,7 @@
 import { createWebHistory, createRouter } from 'vue-router';
 import login from './pages/login.vue';
 import user from './pages/user.vue'
+import client from './pages/client.vue'
 import roles from './pages/roles.vue'
 import product from './pages/product.vue'
 import order from './pages/order.vue'
@@ -19,6 +20,14 @@ const routes = [
         path : '/user',
         name : 'User',
         component : user,
+        meta:{
+            requiresAuth:true
+        }
+    },
+    {
+        path : '/client',
+        name : 'Client',
+        component : client,
         meta:{
             requiresAuth:true
         }
