@@ -22,8 +22,6 @@ return new class extends Migration
             $table->integer('rol')->length(8);
             $table->rememberToken();
             $table->timestamps(); 
-           
-            $table->unique('rol');
         });
     }
 
