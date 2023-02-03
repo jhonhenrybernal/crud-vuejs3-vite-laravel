@@ -78,7 +78,7 @@ class UserController extends Controller
      */
     public function index()
     {
-        $User = User::all();
+        $User = User::with('role')->get();
         return response()->json([
         "success" => true,
         "message" => "User List",
@@ -158,22 +158,26 @@ class UserController extends Controller
         $input = $request->all();
         $validator = Validator::make($input, [
             'name' => 'required',
-            'password' => 'required',
             'rol' => 'required',
             'login' => 'required'
             ],[
                 'login.required' => 'El  :attribute es requerido.',
-                'password.required' => 'El  :attribute es requerido.',
                 'rol.required' => 'El  :attribute es requerido.',
                 'login.required' => 'El  :attribute es requerido.'
             ]);
         if($validator->fails()){
-        return $this->sendError('Validation Error.', $validator->errors());       
+            return response()->json([
+                "success" => false,
+                "message" => "User List",
+                "data" => $validator->errors()
+                ]);   
         }
         $user->name = $input['name'];
         $user->rol = $input['rol'];
         $user->login = $input['login'];
-        $user->password = $input['password'];
+        if ($input['password'] !== null) {
+            $user->password = Hash::make($input['password']);
+        }
         $user->save();
         return response()->json([
         "success" => true,
