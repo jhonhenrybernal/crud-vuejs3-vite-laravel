@@ -10,11 +10,11 @@
               </div>
               <div class="md:block">
                 <div class="ml-10 flex items-baseline space-x-4">
-                    <router-link class="text-gray-300 hover:bg-gray-700 hover:text-white" :to="{name : 'User' }" v-if="$store.getters.getToken != 0"> Usuarios</router-link>
-                    <router-link class="text-gray-300 hover:bg-gray-700 hover:text-white" :to="{name : 'Roles' }" v-if="$store.getters.getToken != 0"> Roles</router-link>
-                    <router-link class="text-gray-300 hover:bg-gray-700 hover:text-white" :to="{name : 'Client' }" v-if="$store.getters.getToken != 0"> Clientes</router-link>
-                    <router-link class="text-gray-300 hover:bg-gray-700 hover:text-white" :to="{name : 'Product' }" v-if="$store.getters.getToken != 0"> Productos</router-link>
-                    <router-link class="text-gray-300 hover:bg-gray-700 hover:text-white" :to="{name : 'Order' }" v-if="$store.getters.getToken != 0"> Ordenes</router-link>                 
+                    <router-link class="text-gray-300 hover:bg-gray-700 hover:text-white" :to="{name : 'User' }" v-if="$store.getters.getUserIn"> Usuarios</router-link>
+                    <router-link class="text-gray-300 hover:bg-gray-700 hover:text-white" :to="{name : 'Roles' }" v-if="$store.getters.getRolesIn"> Roles</router-link>
+                    <router-link class="text-gray-300 hover:bg-gray-700 hover:text-white" :to="{name : 'Client' }" v-if="$store.getters.getClientIn"> Clientes</router-link>
+                    <router-link class="text-gray-300 hover:bg-gray-700 hover:text-white" :to="{name : 'Product' }" v-if="$store.getters.getProductIn"> Productos</router-link>
+                    <router-link class="text-gray-300 hover:bg-gray-700 hover:text-white" :to="{name : 'Order' }" v-if="$store.getters.getOrderIn"> Ordenes</router-link>                 
                 </div>
               </div>
             </div>
@@ -42,6 +42,7 @@
 
     function logout(){
         store.dispatch('removeToken');
+        store.dispatch('removeRole');
         router.push({name:'Login'})
     }
   

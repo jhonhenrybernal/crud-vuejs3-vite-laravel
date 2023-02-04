@@ -71,10 +71,44 @@
     axios.post('/api/login',form).then(res=>{
         loading.value = false;
         if(res.data.success){
-            store.dispatch('setToken',res.data.data);
-            router.push({name:'User'})
+            store.dispatch('setToken',res.data.data.token);
+            store.dispatch('setRole',res.data.data.role);
+
+            switch (res.data.data.role) {
+              case 'usuario':
+              store.dispatch('setUserIn',false)
+              store.dispatch('setRolesIn',false)
+              store.dispatch('setClientIn',false)
+              store.dispatch('setProductIn',true)
+              store.dispatch('setOrderIn',true)
+              router.push({name:'Product'})
+                break;
+              case 'administrador':
+              store.dispatch('setUserIn',true)
+              store.dispatch('setRolesIn',true)
+              store.dispatch('setClientIn',true)
+              store.dispatch('setProductIn',true)
+              store.dispatch('setOrderIn',true)
+              router.push({name:'User'})
+                break;
+              case 'cliente':
+              store.dispatch('setUserIn',false)
+              store.dispatch('setRolesIn',false)
+              store.dispatch('setClientIn',false)
+              store.dispatch('setProductIn',false)
+              store.dispatch('setOrderIn',true)
+              router.push({name:'Order'})
+                break;
+              default:
+                store.dispatch('setUserIn',true)
+                store.dispatch('setRolesIn',true)
+                store.dispatch('setClientIn',true)
+                store.dispatch('setProductIn',true)
+                store.dispatch('setOrderIn',true)
+                router.push({name:'User'})
+                break;
+            }
         }else{
-          console.log(res.data.data)
           messageError.value = res.data.data;
           alert.value = true 
           setTimeout(() => {
