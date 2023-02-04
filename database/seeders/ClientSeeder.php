@@ -7,7 +7,7 @@ use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 
-class UserSeeder extends Seeder
+class ClientSeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -16,14 +16,13 @@ class UserSeeder extends Seeder
      */
     public function run()
     {
-        \App\Models\User::create([
-            'name' => 'Administrador',
-            'login' => 'admin@example.com',
+        \App\Models\Client::create([
+            'name' => 'Administrador cliente compra',
+            'login' => 'adminCompra@example.com',
             'password' => Hash::make('12345'), // password
             'remember_token' => Str::random(10),
             'login_verified_at' => now(),
             'rol' => 1
         ]);
-
     }
 }

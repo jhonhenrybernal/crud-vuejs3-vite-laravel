@@ -157,9 +157,10 @@ class ClientController extends Controller
      * @param  \App\Models\Client  $customers
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Client $user)
+    public function update(Request $request,$id)
     {
         $input = $request->all();
+        $client =  Client::find($id);
         $validator = Validator::make($input, [
             'name' => 'required',
             'rol' => 'required',
@@ -176,17 +177,17 @@ class ClientController extends Controller
                 "data" => $validator->errors()
                 ]);   
         }
-        $user->name = $input['name'];
-        $user->rol = $input['rol'];
-        $user->login = $input['login'];
+        $client->name = $input['name'];
+        $client->rol = $input['rol'];
+        $client->login = $input['login'];
         if ($input['password'] !== null) {
-            $user->password = Hash::make($input['password']);
+            $client->password = Hash::make($input['password']);
         }
-        $user->save();
+        $client->save();
         return response()->json([
         "success" => true,
         "message" => "cliente actualizado.",
-        "data" => $user
+        "data" =>  Client::with('role')->get()
         ]);
     }
 

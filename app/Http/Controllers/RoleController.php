@@ -16,7 +16,28 @@ class RoleController extends Controller
      */
     public function index()
     {
-        $role = Role::all();
+        if (auth()->user()->rol == 1 || auth()->user()->rol == 2) {
+            $role = Role::whereIn('id',[1,2])->get();
+        }else{
+            $role = Role::all();
+        }
+        return response()->json([
+        "success" => true,
+        "message" => "Role Lista",
+        "data" => $role
+        ]);
+    }
+
+      /**
+     * @author Jhon bernal
+     * Mostrar una lista del role.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function indexClient()
+    {
+        $role = Role::whereIn('id',[1,3])->get();
+        
         return response()->json([
         "success" => true,
         "message" => "Role Lista",
@@ -69,7 +90,6 @@ class RoleController extends Controller
         "message" => "Role especifico.",
         "data" => $role
         ]);
-
     }
 
     /**

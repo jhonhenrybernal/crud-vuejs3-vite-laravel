@@ -28,4 +28,8 @@ class PurchaseOrder extends Model
     public function user() {
         return $this->hasOne('App\Models\User','id','user_id');
     }
+
+    public function client() {
+        return $this->hasOne('App\Models\Client','id','user_id');
+    }
 }

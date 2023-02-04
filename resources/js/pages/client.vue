@@ -121,7 +121,7 @@ import moment from 'moment';
                 this.listData = res.data.data
             })
 
-            await axios.get('/api/role', {
+            await axios.get('/api/roleClient', {
                 headers: {
                 Authorization: 'Bearer ' +  this.token 
                 }

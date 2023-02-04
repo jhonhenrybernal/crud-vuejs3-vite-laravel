@@ -10,7 +10,7 @@
         <div class="mx-auto max-w-7xl py-1 sm:px-3 lg:px-1" v-if="!openForm">
           <div class="lg:flexlg:justify-between">
               <div class="mt-6 flex lg:mt-5 lg:ml-5">
-                  <span class="sm:ml-3">
+                  <span class="sm:ml-3" v-if="$store.getters.getRole === 'cliente' || $store.getters.getRole === 'administrador'">
                       <button type="button" @click="openForm = true" class="inline-flex items-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
                         Nueva orden
                       </button>
@@ -29,7 +29,7 @@
                 <tr  v-for="(list,k) in listData" :key="k">
                     <td class="border px-8 py-4" >{{ list.order }}</td>
                     <td class="border px-8 py-4" >{{ list.date_purchase }}</td>
-                    <td class="border px-8 py-4" >{{ list.user.name }}</td>
+                    <td class="border px-8 py-4" >{{ list.client.name }}</td>
                     <td class="border px-8 py-4" >{{ list.cost }}</td>
                 </tr>
             </table>

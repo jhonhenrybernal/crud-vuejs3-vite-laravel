@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\PurchaseOrder;
+use App\Models\Client;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
@@ -17,7 +18,11 @@ class PurchaseOrderController extends Controller
      */
     public function index()
     {
-        $purchaseOrder = PurchaseOrder::with('purchaseOrderProduct')->with('user')->get();
+        if (auth()->user()->rol == 3) {    
+            $purchaseOrder  = PurchaseOrder::where('user_id',auth()->user()->id)->with('purchaseOrderProduct')->with('client')->get();
+        }else{
+            $purchaseOrder  = PurchaseOrder::with('purchaseOrderProduct')->with('client')->get();
+        }
         return response()->json([
         "success" => true,
         "message" => "User List",
@@ -55,10 +60,17 @@ class PurchaseOrderController extends Controller
                 ]); 
         }
         $order = Str::random(10);
+        $roleId = 0;
+
+        if (auth()->user()->rol == 1) {
+            $roleId = 1;
+        }else{
+            $roleId = Client::find(auth()->user()->id)->id;
+        }
         $purchaseOrder = PurchaseOrder::create([
             'date_purchase' => $input['date_purchase'],
             'order' =>$order ,
-            'user_id' => auth()->user()->id,
+            'user_id' => $roleId ,
             'cost' => 0
         ]);
 
@@ -75,10 +87,15 @@ class PurchaseOrderController extends Controller
         $purchaseOrder->cost = $purchaseOrderProductStore;
         $purchaseOrder->save();
 
+        if (auth()->user()->rol == 3) {    
+            $purchaseOrder  = PurchaseOrder::where('user_id',auth()->user()->id)->with('purchaseOrderProduct')->with('client')->get();
+        }else{
+            $purchaseOrder  = PurchaseOrder::with('purchaseOrderProduct')->with('client')->get();
+        }
         return response()->json([
         "success" => true,
         "message" => "Orden de compra creado.",
-        "data" => PurchaseOrder::with('purchaseOrderProduct')->with('user')->get()
+        "data" =>  $purchaseOrder
         ]);
     }
 

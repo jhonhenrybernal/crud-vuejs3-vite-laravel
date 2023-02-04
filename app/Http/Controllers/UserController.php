@@ -38,8 +38,8 @@ class UserController extends Controller
                 "data" =>  $validator->messages()
                 ]);   
         }
-        $User = User::where('login', request()->login)->first();
-        $client = Client::where('login', request()->login)->first();
+        $User = User::where('login', request()->login)->with('role')->first();
+        $client = Client::where('login', request()->login)->with('role')->first();
 
         if ($User ) {
             if(!Hash::check(request()->password, $User->password)){
@@ -74,15 +74,18 @@ class UserController extends Controller
         }
        
         $token = null;
+        $role = 0;
         if ($User) {
             $token =  $User->createToken(request()->login)->plainTextToken;
+            $role = $User->role[0]->name;
         }else if ($client) {
             $token =  $client->createToken(request()->login)->plainTextToken;
+            $role = $client->role[0]->name;
         }
         return response()->json([
             "success" => true,
             "message" => "User List",
-            "data" => $token
+            "data" => ['token'=>$token,'role' =>strtolower($role)]
             ]);
     }
 
